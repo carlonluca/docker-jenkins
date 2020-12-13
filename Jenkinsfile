@@ -25,16 +25,20 @@ stage('Build') {
                 * the Dockerfile in this repository, but not publishing to docker hub
                 */
                 stage('Build') {
-                    powershell './make.ps1'
+                    infra.withDockerCredentials {
+                      powershell './make.ps1'
+                    }
                 }
 
                 stage('Test') {
-                    def windowsTestStatus = powershell(script: './make.ps1 test', returnStatus: true)
-                    junit(allowEmptyResults: true, keepLongStdio: true, testResults: 'target/**/junit-results.xml')
-                    if (windowsTestStatus > 0) {
+                    infra.withDockerCredentials {
+                      def windowsTestStatus = powershell(script: './make.ps1 test', returnStatus: true)
+                      junit(allowEmptyResults: true, keepLongStdio: true, testResults: 'target/**/junit-results.xml')
+                      if (windowsTestStatus > 0) {
                         // If something bad happened let's clean up the docker images
                         powershell(script: '& docker system prune --force --all', returnStatus: true)
                         error('Windows test stage failed.')
+                      }
                     }
                 }
 
@@ -85,7 +89,9 @@ stage('Build') {
                 * the Dockerfile in this repository, but not publishing to docker hub
                 */
                 stage('Build') {
-                    sh 'make build'
+                    infra.withDockerCredentials {
+                      sh 'make build'
+                    }
                 }
 
                 stage('Prepare Test') {
@@ -101,7 +107,9 @@ stage('Build') {
                     builders[label] = {
                         stage("Test ${label}") {
                             try {
-                                sh "make test-$label"
+                                infra.withDockerCredentials {
+                                  sh "make test-$label"
+                                }    
                             } catch(err) {
                                 error("${err.toString()}")
                             } finally {
