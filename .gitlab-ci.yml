@@ -1,0 +1,14 @@
+stages:
+  - build
+
+docker-build:
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_DOCKER_HUB_USER" -p "$CI_DOCKER_HUB_PASSWORD" docker.io
+  script:
+    - docker build -t carlonluca/jenkins:"$VERSION" -t carlonluca/jenkins:latest -f ./multiarch/Dockerfile.debian .
+    - docker push carlonluca/jenkins:"$VERSION"
+    - docker push carlonluca/jenkins:latest
