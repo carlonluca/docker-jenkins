@@ -1,3 +1,7 @@
+variables:
+  CI_DOCKER_HUB_USER: ""
+  CI_DOCKER_HUB_PASSWORD: ""
+
 stages:
   - build
 
