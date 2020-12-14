@@ -13,4 +13,4 @@ docker-build:
     - docker push carlonluca/jenkins:"$VERSION"
     - docker push carlonluca/jenkins:latest
   rules:
-    when: manual
+    - when: manual
