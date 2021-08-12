@@ -73,7 +73,6 @@ publish() {
     export LATEST_LTS=$latest_lts
     set -x
     docker buildx bake --file docker-bake.hcl \
-                 --set '*.platform=linux/amd64' \
                  "${build_opts[@]+"${build_opts[@]}"}" linux
     set +x
     if [ "$dry_run" = true ]; then
@@ -86,7 +85,6 @@ publish() {
 
 dry_run=false
 debug=false
-variant=""
 start_after="1.0" # By default, we will publish anything missing (only the last 30 actually)
 
 while [[ $# -gt 0 ]]; do
@@ -97,10 +95,6 @@ while [[ $# -gt 0 ]]; do
         ;;
         -d)
         debug=true
-        ;;
-        -v|--variant)
-        variant="-"$2
-        shift
         ;;
         --start-after)
         start_after=$2
@@ -119,19 +113,17 @@ if [ "$dry_run" = true ]; then
     echo "Dry run, will not publish images"
 fi
 
-TOKEN=$(login-token)
-
 versions=$(get-latest-versions)
 latest_weekly_version=$(echo "${versions}" | tail -n 1)
 
 latest_lts_version=$(echo "${versions}" | grep -E '[0-9]\.[0-9]+\.[0-9]' | tail -n 1 || echo "No LTS versions")
 
 for version in $versions; do
-    # Temporary hack to publish 2.289.3 even though some variants are already published
-    if is-published "$version$variant" && [ "$version" != "2.289.3" ] ; then
-        echo "Tag is already published: $version$variant"
+    TOKEN=$(login-token)
+    if is-published "$version"; then
+        echo "Tag is already published: $version"
     else
-        echo "$version$variant not published yet"
+        echo "$version not published yet"
 
         if [[ $version == "${latest_weekly_version}" ]]; then
           latest_weekly="true"
