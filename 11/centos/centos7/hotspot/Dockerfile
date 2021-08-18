@@ -1,4 +1,6 @@
-FROM centos:8.3.2011
+FROM centos:centos7.9.2009
+
+ARG TARGETARCH
 
 RUN echo -e '[AdoptOpenJDK]\n\
 name=AdoptOpenJDK\n\
@@ -6,7 +8,7 @@ baseurl=https://adoptopenjdk.jfrog.io/adoptopenjdk/rpm/centos/$releasever/$basea
 enabled=1\n\
 gpgcheck=1\n\
 gpgkey=https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public' > /etc/yum.repos.d/adoptopenjdk.repo && \
-    yum update -y && yum install -y git curl adoptopenjdk-8-hotspot-8u292_b10-3 freetype fontconfig unzip which && \
+    yum update -y && yum install -y git curl adoptopenjdk-11-hotspot-11.0.11+9-3 freetype fontconfig unzip which && \
     yum clean all
 
 ARG TARGETARCH
@@ -20,7 +22,7 @@ RUN GIT_LFS_ARCHIVE="git-lfs-linux-${TARGETARCH}-v${GIT_LFS_VERSION}.tar.gz" \
     set -x; curl --fail --silent --location --show-error --output "/tmp/${GIT_LFS_ARCHIVE}" "${GIT_LFS_RELEASE_URL}" && \
     curl --fail --silent --location --show-error --output "/tmp/git-lfs-sha256sums.asc" https://github.com/git-lfs/git-lfs/releases/download/v${GIT_LFS_VERSION}/sha256sums.asc && \
     gpg --no-tty --import /tmp/git_lfs_pub.gpg && \
-    gpg -d /tmp/git-lfs-sha256sums.asc | grep "${GIT_LFS_ARCHIVE}" | (cd /tmp;sha256sum -c) && \
+    gpg -d /tmp/git-lfs-sha256sums.asc | grep "${GIT_LFS_ARCHIVE}" | (cd /tmp; sha256sum -c ) && \
     mkdir -p /tmp/git-lfs && \
     tar xzvf "/tmp/${GIT_LFS_ARCHIVE}" -C /tmp/git-lfs && \
     bash -x /tmp/git-lfs/install.sh && \
@@ -57,21 +59,21 @@ VOLUME $JENKINS_HOME
 RUN mkdir -p ${REF}/init.groovy.d
 
 # Use tini as subreaper in Docker container to adopt zombie processes
-ARG TINI_VERSION=v0.16.1
-COPY tini_pub.gpg ${JENKINS_HOME}/tini_pub.gpg
-RUN curl -fsSL https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static-amd64 -o /sbin/tini \
-  && curl -fsSL https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static-amd64.asc -o /sbin/tini.asc \
-  && gpg --no-tty --import ${JENKINS_HOME}/tini_pub.gpg \
+ARG TINI_VERSION=v0.19.0
+COPY tini_pub.gpg "${JENKINS_HOME}/tini_pub.gpg"
+RUN curl -fsSL "https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static-${TARGETARCH}" -o /sbin/tini \
+  && curl -fsSL "https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static-${TARGETARCH}.asc" -o /sbin/tini.asc \
+  && gpg --no-tty --import "${JENKINS_HOME}/tini_pub.gpg" \
   && gpg --verify /sbin/tini.asc \
   && rm -rf /sbin/tini.asc /root/.gnupg \
   && chmod +x /sbin/tini
 
 # jenkins version being bundled in this docker image
 ARG JENKINS_VERSION
-ENV JENKINS_VERSION ${JENKINS_VERSION:-2.235.4}
+ENV JENKINS_VERSION ${JENKINS_VERSION:-2.289.3}
 
 # jenkins.war checksum, download will be validated using it
-ARG JENKINS_SHA=e5688a8f07cc3d79ba3afa3cab367d083dd90daab77cebd461ba8e83a1e3c177
+ARG JENKINS_SHA=996dfd29d5f933546af9e9f77c29b371fb0627b8266b6c9f134ac2e0f1248b87
 
 # Can be used to customize where jenkins.war get downloaded from
 ARG JENKINS_URL=https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-war/${JENKINS_VERSION}/jenkins-war-${JENKINS_VERSION}.war
