@@ -22,17 +22,11 @@ group "linux-arm64" {
 }
 
 group "linux-s390x" {
-  targets = [
-    "rhel_ubi8_jdk11",
-    "debian_jdk11",
-  ]
+  targets = []
 }
 
 group "linux-ppc64le" {
-  targets = [
-    "rhel_ubi8_jdk11",
-    "debian_jdk11",
-  ]
+  targets = []
 }
 
 group "windows" {
@@ -161,7 +155,7 @@ target "centos7_jdk11" {
 }
 
 target "debian_jdk8" {
-  dockerfile = "8/debian/buster/hotspot/Dockerfile"
+  dockerfile = "8/debian/bullseye/hotspot/Dockerfile"
   context = "."
   args = {
     JENKINS_VERSION = JENKINS_VERSION
@@ -178,7 +172,7 @@ target "debian_jdk8" {
 }
 
 target "debian_jdk11" {
-  dockerfile = "11/debian/buster/hotspot/Dockerfile"
+  dockerfile = "11/debian/bullseye/hotspot/Dockerfile"
   context = "."
   args = {
     JENKINS_VERSION = JENKINS_VERSION
@@ -195,11 +189,11 @@ target "debian_jdk11" {
     equal(LATEST_LTS, "true") ? "${REGISTRY}/${JENKINS_REPO}:lts" : "",
     equal(LATEST_LTS, "true") ? "${REGISTRY}/${JENKINS_REPO}:lts-jdk11" : "",
   ]
-  platforms = ["linux/amd64", "linux/arm64", "linux/ppc64le", "linux/s390x"]
+  platforms = ["linux/amd64", "linux/arm64"]
 }
 
 target "debian_slim_jdk8" {
-  dockerfile = "8/debian/buster-slim/hotspot/Dockerfile"
+  dockerfile = "8/debian/bullseye-slim/hotspot/Dockerfile"
   context = "."
   args = {
     JENKINS_VERSION = JENKINS_VERSION
@@ -216,7 +210,7 @@ target "debian_slim_jdk8" {
 }
 
 target "debian_slim_jdk11" {
-  dockerfile = "11/debian/buster-slim/hotspot/Dockerfile"
+  dockerfile = "11/debian/bullseye-slim/hotspot/Dockerfile"
   context = "."
   args = {
     JENKINS_VERSION = JENKINS_VERSION
@@ -247,7 +241,7 @@ target "rhel_ubi8_jdk11" {
     equal(LATEST_WEEKLY, "true") ? "${REGISTRY}/${JENKINS_REPO}:rhel-ubi8-jdk11" : "",
     equal(LATEST_LTS, "true") ? "${REGISTRY}/${JENKINS_REPO}:lts-rhel-ubi8-jdk11" : "",
   ]
-  platforms = ["linux/amd64", "linux/arm64", "linux/ppc64le", "linux/s390x"]
+  platforms = ["linux/amd64", "linux/arm64"]
 }
 
 # TODO update windows publishing script to use this file
