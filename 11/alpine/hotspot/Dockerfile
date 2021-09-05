@@ -11,7 +11,7 @@ RUN jlink \
          --compress=2 \
          --output /javaruntime
 
-FROM alpine:3.14.1
+FROM alpine:3.14.2
 
 RUN apk add --no-cache \
   bash \
@@ -24,6 +24,8 @@ RUN apk add --no-cache \
   ttf-dejavu \
   tzdata \
   unzip
+
+ENV LANG C.UTF-8
 
 ARG TARGETARCH
 ARG GIT_LFS_VERSION=2.13.3
