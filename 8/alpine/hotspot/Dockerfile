@@ -1,7 +1,7 @@
 # FIXME(oleg_nenashev): This is not an official AdoptOpenJDK Docker Image.
 # There is no official Alpine images at the moment.
 # Needs upgrade when/if there is an official alpine image.
-FROM adoptopenjdk/openjdk8:jdk8u302-b08-alpine
+FROM adoptopenjdk/openjdk8:jdk8u312-b07-alpine
 
 RUN apk add --no-cache \
   bash \
@@ -18,6 +18,7 @@ RUN apk add --no-cache \
 ENV LANG C.UTF-8
 
 ARG TARGETARCH
+ARG COMMIT_SHA
 ARG GIT_LFS_VERSION=3.0.1
 
 # required for multi-arch support, revert to package cloud after:
@@ -116,4 +117,5 @@ LABEL \
     org.opencontainers.image.version="${JENKINS_VERSION}" \
     org.opencontainers.image.url="https://www.jenkins.io/" \
     org.opencontainers.image.source="https://github.com/jenkinsci/docker" \
+    org.opencontainers.image.revision="${COMMIT_SHA}" \
     org.opencontainers.image.licenses="MIT"
