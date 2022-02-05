@@ -1,4 +1,4 @@
-FROM eclipse-temurin:11.0.13_8-jdk-focal as jre-build
+FROM eclipse-temurin:11.0.14_9-jdk-focal as jre-build
 
 RUN jlink \
          --add-modules ALL-MODULE-PATH \
@@ -6,7 +6,7 @@ RUN jlink \
          --compress=2 \
          --output /javaruntime
 
-FROM debian:bullseye-20211220
+FROM debian:bullseye-20220125
 
 RUN apt-get update && \
     apt-get install -y git curl gpg unzip libfreetype6 libfontconfig1 && \
