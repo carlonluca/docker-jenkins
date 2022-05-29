@@ -1,18 +1,32 @@
-FROM eclipse-temurin:8u332-b09-jdk-focal as jre-build
+FROM eclipse-temurin:17.0.3_7-jdk-alpine AS jre-build
 
-FROM debian:bullseye-20220509
+# Generate smaller java runtime without unneeded files
+# for now we include the full module path to maintain compatibility
+# while still saving space (approx 200mb from the full distribution)
+RUN apk add --no-cache binutils
+RUN jlink \
+         --add-modules ALL-MODULE-PATH \
+         --strip-debug \
+         --no-man-pages \
+         --no-header-files \
+         --compress=2 \
+         --output /javaruntime
 
-RUN apt-get update \
-  && apt-get install -y \
-    curl \
-    git \
-    gpg \
-    libfontconfig1 \
-    libfreetype6 \
-    procps \
-    unzip \
-    wget \
-  && rm -rf /var/lib/apt/lists/*
+FROM alpine:3.16.0
+
+RUN apk add --no-cache \
+  bash \
+  coreutils \
+  curl \
+  git \
+  gnupg \
+  musl-locales \
+  musl-locales-lang \
+  openssh-client \
+  tini \
+  ttf-dejavu \
+  tzdata \
+  unzip
 
 ENV LANG C.UTF-8
 
@@ -52,8 +66,8 @@ ENV REF $REF
 # ensure you use the same uid
 RUN mkdir -p $JENKINS_HOME \
   && chown ${uid}:${gid} $JENKINS_HOME \
-  && groupadd -g ${gid} ${group} \
-  && useradd -d "$JENKINS_HOME" -u ${uid} -g ${gid} -l -m -s /bin/bash ${user}
+  && addgroup -g ${gid} ${group} \
+  && adduser -h "$JENKINS_HOME" -u ${uid} -G ${group} -s /bin/bash -D ${user}
 
 # Jenkins home directory is a volume, so configuration and build history
 # can be persisted and survive image upgrades
@@ -63,16 +77,6 @@ VOLUME $JENKINS_HOME
 # to set on a fresh new installation. Use it to bundle additional plugins
 # or config file with your custom jenkins Docker image.
 RUN mkdir -p ${REF}/init.groovy.d
-
-# Use tini as subreaper in Docker container to adopt zombie processes
-ARG TINI_VERSION=v0.19.0
-COPY tini_pub.gpg "${JENKINS_HOME}/tini_pub.gpg"
-RUN curl -fsSL "https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static-${TARGETARCH}" -o /sbin/tini \
-  && curl -fsSL "https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static-${TARGETARCH}.asc" -o /sbin/tini.asc \
-  && gpg --no-tty --import "${JENKINS_HOME}/tini_pub.gpg" \
-  && gpg --verify /sbin/tini.asc \
-  && rm -rf /sbin/tini.asc /root/.gnupg \
-  && chmod +x /sbin/tini
 
 # jenkins version being bundled in this docker image
 ARG JENKINS_VERSION
@@ -104,11 +108,12 @@ EXPOSE ${http_port}
 # will be used by attached agents:
 EXPOSE ${agent_port}
 
+ENV JENKINS_ENABLE_FUTURE_JAVA=true
 ENV COPY_REFERENCE_FILE_LOG $JENKINS_HOME/copy_reference_file.log
 
 ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH "${JAVA_HOME}/bin:${PATH}"
-COPY --from=jre-build /opt/java/openjdk $JAVA_HOME
+COPY --from=jre-build /javaruntime $JAVA_HOME
 
 USER ${user}
 

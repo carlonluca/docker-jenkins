@@ -1,10 +1,16 @@
-FROM eclipse-temurin:8u322-b06-jdk-focal as jre-build
+FROM eclipse-temurin:8u332-b09-jdk-focal as jre-build
 
 FROM debian:bullseye-20220509-slim
 
-RUN apt-get update && \
-    apt-get install -y git curl gpg unzip libfreetype6 libfontconfig1 && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+  && apt-get install -y \
+    curl \
+    git \
+    gpg \
+    libfontconfig1 \
+    libfreetype6 \
+    unzip \
+  && rm -rf /var/lib/apt/lists/*
 
 ENV LANG C.UTF-8
 
@@ -45,7 +51,7 @@ ENV REF $REF
 RUN mkdir -p $JENKINS_HOME \
   && chown ${uid}:${gid} $JENKINS_HOME \
   && groupadd -g ${gid} ${group} \
-  && useradd -d "$JENKINS_HOME" -u ${uid} -g ${gid} -m -s /bin/bash ${user}
+  && useradd -d "$JENKINS_HOME" -u ${uid} -g ${gid} -l -m -s /bin/bash ${user}
 
 # Jenkins home directory is a volume, so configuration and build history
 # can be persisted and survive image upgrades
@@ -106,7 +112,6 @@ USER ${user}
 
 COPY jenkins-support /usr/local/bin/jenkins-support
 COPY jenkins.sh /usr/local/bin/jenkins.sh
-COPY tini-shim.sh /bin/tini
 COPY jenkins-plugin-cli.sh /bin/jenkins-plugin-cli
 
 ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/jenkins.sh"]

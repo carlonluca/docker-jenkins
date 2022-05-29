@@ -1,6 +1,14 @@
-FROM eclipse-temurin:8u332-b09-jdk-focal as jre-build
+FROM eclipse-temurin:17.0.3_7-jdk-focal as jre-build
 
-FROM debian:bullseye-20220509
+RUN jlink \
+         --add-modules ALL-MODULE-PATH \
+         --strip-debug \
+         --no-man-pages \
+         --no-header-files \
+         --compress=2 \
+         --output /javaruntime
+
+FROM debian:bullseye-20220509-slim
 
 RUN apt-get update \
   && apt-get install -y \
@@ -9,9 +17,7 @@ RUN apt-get update \
     gpg \
     libfontconfig1 \
     libfreetype6 \
-    procps \
     unzip \
-    wget \
   && rm -rf /var/lib/apt/lists/*
 
 ENV LANG C.UTF-8
@@ -105,10 +111,11 @@ EXPOSE ${http_port}
 EXPOSE ${agent_port}
 
 ENV COPY_REFERENCE_FILE_LOG $JENKINS_HOME/copy_reference_file.log
+ENV JENKINS_ENABLE_FUTURE_JAVA=true
 
 ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH "${JAVA_HOME}/bin:${PATH}"
-COPY --from=jre-build /opt/java/openjdk $JAVA_HOME
+COPY --from=jre-build /javaruntime $JAVA_HOME
 
 USER ${user}
 
