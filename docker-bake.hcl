@@ -3,15 +3,11 @@
 group "linux" {
   targets = [
     "almalinux_jdk11",
-    "alpine_jdk8",
     "alpine_jdk11",
     "alpine_jdk17",
-    "centos7_jdk8",
     "centos7_jdk11",
-    "debian_jdk8",
     "debian_jdk11",
     "debian_jdk17",
-    "debian_slim_jdk8",
     "debian_slim_jdk11",
     "debian_slim_jdk17",
     "rhel_ubi8_jdk11"
@@ -61,10 +57,6 @@ variable "LATEST_WEEKLY" {
 
 variable "LATEST_LTS" {
   default = "false"
-}
-
-variable "GIT_LFS_VERSION" {
-  default = "3.1.4"
 }
 
 variable "PLUGIN_CLI_VERSION" {
@@ -120,24 +112,6 @@ target "almalinux_jdk11" {
   platforms = ["linux/amd64", "linux/arm64"]
 }
 
-target "alpine_jdk8" {
-  dockerfile = "8/alpine/hotspot/Dockerfile"
-  context = "."
-  args = {
-    JENKINS_VERSION = JENKINS_VERSION
-    JENKINS_SHA = JENKINS_SHA
-    COMMIT_SHA = COMMIT_SHA
-    GIT_LFS_VERSION = GIT_LFS_VERSION
-    PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
-  }
-  tags = [
-    tag(true, "alpine-jdk8"),
-    tag_weekly(false, "alpine-jdk8"),
-    tag_lts(false, "lts-alpine-jdk8")
-  ]
-  platforms = ["linux/amd64"]
-}
-
 target "alpine_jdk11" {
   dockerfile = "11/alpine/hotspot/Dockerfile"
   context = "."
@@ -145,7 +119,6 @@ target "alpine_jdk11" {
     JENKINS_VERSION = JENKINS_VERSION
     JENKINS_SHA = JENKINS_SHA
     COMMIT_SHA = COMMIT_SHA
-    GIT_LFS_VERSION = GIT_LFS_VERSION
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
   }
   tags = [
@@ -166,31 +139,12 @@ target "alpine_jdk17" {
     JENKINS_VERSION = JENKINS_VERSION
     JENKINS_SHA = JENKINS_SHA
     COMMIT_SHA = COMMIT_SHA
-    GIT_LFS_VERSION = GIT_LFS_VERSION
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
   }
   tags = [
     tag(true, "alpine-jdk17-preview"),
     tag_weekly(false, "alpine-jdk17-preview"),
     tag_lts(false, "lts-alpine-jdk17-preview")
-  ]
-  platforms = ["linux/amd64"]
-}
-
-target "centos7_jdk8" {
-  dockerfile = "8/centos/centos7/hotspot/Dockerfile"
-  context = "."
-  args = {
-    JENKINS_VERSION = JENKINS_VERSION
-    JENKINS_SHA = JENKINS_SHA
-    COMMIT_SHA = COMMIT_SHA
-    GIT_LFS_VERSION = GIT_LFS_VERSION
-    PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
-  }
-  tags = [
-    tag(true, "centos7-jdk8"),
-    tag_weekly(false, "centos7-jdk8"),
-    tag_lts(false, "lts-centos7-jdk8")
   ]
   platforms = ["linux/amd64"]
 }
@@ -202,7 +156,6 @@ target "centos7_jdk11" {
     JENKINS_VERSION = JENKINS_VERSION
     JENKINS_SHA = JENKINS_SHA
     COMMIT_SHA = COMMIT_SHA
-    GIT_LFS_VERSION = GIT_LFS_VERSION
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
   }
   tags = [
@@ -216,25 +169,6 @@ target "centos7_jdk11" {
   platforms = ["linux/amd64"]
 }
 
-target "debian_jdk8" {
-  dockerfile = "8/debian/bullseye/hotspot/Dockerfile"
-  context = "."
-  args = {
-    JENKINS_VERSION = JENKINS_VERSION
-    JENKINS_SHA = JENKINS_SHA
-    COMMIT_SHA = COMMIT_SHA
-    GIT_LFS_VERSION = GIT_LFS_VERSION
-    PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
-  }
-  tags = [
-    tag(true, "jdk8"),
-    tag_weekly(false, "latest-jdk8"),
-    tag_lts(false, "lts-jdk8"),
-    tag_lts(true, "lts-jdk8")
-  ]
-  platforms = ["linux/amd64"]
-}
-
 target "debian_jdk11" {
   dockerfile = "11/debian/bullseye/hotspot/Dockerfile"
   context = "."
@@ -242,7 +176,6 @@ target "debian_jdk11" {
     JENKINS_VERSION = JENKINS_VERSION
     JENKINS_SHA = JENKINS_SHA
     COMMIT_SHA = COMMIT_SHA
-    GIT_LFS_VERSION = GIT_LFS_VERSION
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
   }
   tags = [
@@ -259,22 +192,23 @@ target "debian_jdk11" {
   platforms = ["linux/amd64", "linux/arm64", "linux/s390x"]
 }
 
-target "debian_slim_jdk8" {
-  dockerfile = "8/debian/bullseye-slim/hotspot/Dockerfile"
+target "debian_jdk17" {
+  dockerfile = "17/debian/bullseye/hotspot/Dockerfile"
   context = "."
   args = {
     JENKINS_VERSION = JENKINS_VERSION
     JENKINS_SHA = JENKINS_SHA
     COMMIT_SHA = COMMIT_SHA
-    GIT_LFS_VERSION = GIT_LFS_VERSION
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
   }
   tags = [
-    tag(true, "slim-jdk8"),
-    tag_weekly(false, "slim-jdk8"),
-    tag_lts(false, "lts-slim-jdk8"),
+    tag(true, "jdk17-preview"),
+    tag_weekly(false, "latest-jdk17-preview"),
+    tag_weekly(false, "jdk17-preview"),
+    tag_lts(false, "lts-jdk17-preview"),
+    tag_lts(true, "lts-jdk17-preview")
   ]
-  platforms = ["linux/amd64"]
+  platforms = ["linux/amd64", "linux/arm64"]
 }
 
 target "debian_slim_jdk11" {
@@ -284,7 +218,6 @@ target "debian_slim_jdk11" {
     JENKINS_VERSION = JENKINS_VERSION
     JENKINS_SHA = JENKINS_SHA
     COMMIT_SHA = COMMIT_SHA
-    GIT_LFS_VERSION = GIT_LFS_VERSION
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
   }
   tags = [
@@ -305,7 +238,6 @@ target "debian_slim_jdk17" {
     JENKINS_VERSION = JENKINS_VERSION
     JENKINS_SHA = JENKINS_SHA
     COMMIT_SHA = COMMIT_SHA
-    GIT_LFS_VERSION = GIT_LFS_VERSION
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
   }
   tags = [
@@ -330,26 +262,6 @@ target "rhel_ubi8_jdk11" {
     tag_weekly(false, "rhel-ubi8-jdk11"),
     tag_lts(false, "lts-rhel-ubi8-jdk11"),
     tag_lts(true, "lts-rhel-ubi8-jdk11")
-  ]
-  platforms = ["linux/amd64", "linux/arm64"]
-}
-
-target "debian_jdk17" {
-  dockerfile = "17/debian/bullseye/hotspot/Dockerfile"
-  context = "."
-  args = {
-    JENKINS_VERSION = JENKINS_VERSION
-    JENKINS_SHA = JENKINS_SHA
-    COMMIT_SHA = COMMIT_SHA
-    GIT_LFS_VERSION = GIT_LFS_VERSION
-    PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
-  }
-  tags = [
-    tag(true, "jdk17-preview"),
-    tag_weekly(false, "latest-jdk17-preview"),
-    tag_weekly(false, "jdk17-preview"),
-    tag_lts(false, "lts-jdk17-preview"),
-    tag_lts(true, "lts-jdk17-preview")
   ]
   platforms = ["linux/amd64", "linux/arm64"]
 }

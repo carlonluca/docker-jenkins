@@ -40,7 +40,7 @@ check-reqs:
 	@$(call check_cli,jq)
 
 hadolint:
-	find . -type f -name 'Dockerfile*' -print0 | xargs -0 $(ROOT_DIR)/tools/hadolint
+	find . -type f -name 'Dockerfile*' -not -path "./bats/*" -print0 | xargs -0 $(ROOT_DIR)/tools/hadolint
 
 shellcheck:
 	$(ROOT_DIR)/tools/shellcheck -e SC1091 jenkins-support *.sh tests/test_helpers.bash tools/hadolint tools/shellcheck .ci/publish.sh
@@ -88,7 +88,7 @@ test-%: prepare-test
 # Execute the test harness and write result to a TAP file
 	IMAGE=$* bats/bin/bats $(bats_flags) | tee target/results-$*.tap
 # convert TAP to JUNIT
-	docker run --rm -v "$(CURDIR)":/usr/src/app -w /usr/src/app node:12-alpine \
+	docker run --rm -v "$(CURDIR)":/usr/src/app -w /usr/src/app node:18-alpine \
 		sh -c "npm install tap-xunit -g && cat target/results-$*.tap | tap-xunit --package='jenkinsci.docker.$*' > target/junit-results-$*.xml"
 
 test: prepare-test
