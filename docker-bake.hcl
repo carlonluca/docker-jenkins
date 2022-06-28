@@ -36,11 +36,11 @@ group "linux-ppc64le" {
 # ---- variables ----
 
 variable "JENKINS_VERSION" {
-  default = "2.303"
+  default = "2.356"
 }
 
 variable "JENKINS_SHA" {
-  default = "4dfe49cd7422ec4317a7c7a7c083f40fa475a58a7747bd94187b2cf222006ac0"
+  default = "1163c4554dc93439c5eef02b06a8d74f98ca920bbc012c2b8a089d414cfa8075"
 }
 
 variable "REGISTRY" {
@@ -60,7 +60,7 @@ variable "LATEST_LTS" {
 }
 
 variable "PLUGIN_CLI_VERSION" {
-  default = "2.12.6"
+  default = "2.12.7"
 }
 
 variable "COMMIT_SHA" {
@@ -142,9 +142,9 @@ target "alpine_jdk17" {
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
   }
   tags = [
-    tag(true, "alpine-jdk17-preview"),
-    tag_weekly(false, "alpine-jdk17-preview"),
-    tag_lts(false, "lts-alpine-jdk17-preview")
+    tag(true, "alpine-jdk17"),
+    tag_weekly(false, "alpine-jdk17"),
+    tag_lts(false, "lts-alpine-jdk17")
   ]
   platforms = ["linux/amd64"]
 }
@@ -202,11 +202,11 @@ target "debian_jdk17" {
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
   }
   tags = [
-    tag(true, "jdk17-preview"),
-    tag_weekly(false, "latest-jdk17-preview"),
-    tag_weekly(false, "jdk17-preview"),
-    tag_lts(false, "lts-jdk17-preview"),
-    tag_lts(true, "lts-jdk17-preview")
+    tag(true, "jdk17"),
+    tag_weekly(false, "latest-jdk17"),
+    tag_weekly(false, "jdk17"),
+    tag_lts(false, "lts-jdk17"),
+    tag_lts(true, "lts-jdk17")
   ]
   platforms = ["linux/amd64", "linux/arm64"]
 }
@@ -241,9 +241,9 @@ target "debian_slim_jdk17" {
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
   }
   tags = [
-    tag(true, "slim-jdk17-preview"),
-    tag_weekly(false, "slim-jdk17-preview"),
-    tag_lts(false, "lts-slim-jdk17-preview"),
+    tag(true, "slim-jdk17"),
+    tag_weekly(false, "slim-jdk17"),
+    tag_lts(false, "lts-slim-jdk17"),
   ]
   platforms = ["linux/amd64"]
 }

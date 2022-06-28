@@ -61,7 +61,7 @@ list: check-reqs
 bats:
 	git clone https://github.com/bats-core/bats-core bats ;\
 	cd bats ;\
-	git checkout eac1e9d047b2b8137d85307fc94439c90bdc25ae
+	git checkout 410dd229a5ed005c68167cc90ed0712ad2a1c909; # v1.7.0
 
 prepare-test: bats check-reqs
 	git submodule update --init --recursive
@@ -94,9 +94,6 @@ test-%: prepare-test
 test: prepare-test
 	@make --silent list | while read image; do make --silent "test-$${image}"; done
 
-test-install-plugins: prepare-test
-	@make --silent test TEST_SUITES=tests/install-plugins.bats tests/plugins-cli.bats
-
 publish:
 	./.ci/publish.sh
 
@@ -104,4 +101,4 @@ clean:
 	rm -rf tests/test_helper/bats-*; \
 	rm -rf bats
 
-.PHONY: hadolint shellcheck check-reqs build clean test list test-install-plugins show
+.PHONY: hadolint shellcheck check-reqs build clean test list show
