@@ -1,5 +1,5 @@
 # Placeholder for the specified arch that gets parsed in the publish-experimental.sh script.
-FROM ubuntu:focal
+FROM ubuntu:jammy
 
 ENV TZ=Europe/Rome
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -17,7 +17,7 @@ RUN apt-get update && \
     ssh-client \
     tini \
     unzip \
-    openjdk-11-jre dpkg tar && \
+    openjdk-17-jre dpkg tar && \
     rm -rf /var/lib/apt/lists/*
 
 RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh -o /tmp/script.deb.sh \
