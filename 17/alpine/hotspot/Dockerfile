@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17.0.3_7-jdk-alpine AS jre-build
+FROM eclipse-temurin:17.0.4_8-jdk-alpine AS jre-build
 
 # Generate smaller java runtime without unneeded files
 # for now we include the full module path to maintain compatibility
@@ -12,7 +12,7 @@ RUN apk add --no-cache binutils \
          --compress=2 \
          --output /javaruntime
 
-FROM alpine:3.16.0
+FROM alpine:3.16.1
 
 RUN apk add --no-cache \
     bash \
