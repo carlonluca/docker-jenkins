@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17.0.4_8-jdk-alpine AS jre-build
+FROM eclipse-temurin:17.0.4.1_1-jdk-alpine AS jre-build
 
 # Generate smaller java runtime without unneeded files
 # for now we include the full module path to maintain compatibility
@@ -12,7 +12,7 @@ RUN apk add --no-cache binutils \
          --compress=2 \
          --output /javaruntime
 
-FROM alpine:3.16.1
+FROM alpine:3.16.2
 
 RUN apk add --no-cache \
     bash \
@@ -87,7 +87,7 @@ ENV JENKINS_UC_EXPERIMENTAL=https://updates.jenkins.io/experimental
 ENV JENKINS_INCREMENTALS_REPO_MIRROR=https://repo.jenkins-ci.org/incrementals
 RUN chown -R ${user} "$JENKINS_HOME" "$REF"
 
-ARG PLUGIN_CLI_VERSION=2.12.8
+ARG PLUGIN_CLI_VERSION=2.12.9
 ARG PLUGIN_CLI_URL=https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/${PLUGIN_CLI_VERSION}/jenkins-plugin-manager-${PLUGIN_CLI_VERSION}.jar
 RUN curl -fsSL ${PLUGIN_CLI_URL} -o /opt/jenkins-plugin-manager.jar
 
