@@ -61,7 +61,7 @@ ARG JENKINS_VERSION
 ENV JENKINS_VERSION ${JENKINS_VERSION:-2.378}
 
 # jenkins.war checksum, download will be validated using it
-ARG JENKINS_SHA=b38fe218afb5447b0c9a6fa308d7ab762ac5a58dd89aa68b735067ad6c37c17b
+ARG JENKINS_SHA=67da6fc2ca197160d052191fea7bde72ac68b099b067bcd4551461b8c44be6de
 
 # Can be used to customize where jenkins.war get downloaded from
 ARG JENKINS_URL=https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-war/${JENKINS_VERSION}/jenkins-war-${JENKINS_VERSION}.war
