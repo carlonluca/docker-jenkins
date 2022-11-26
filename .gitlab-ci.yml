@@ -17,5 +17,5 @@ docker-build:
     - docker build -t carlonluca/jenkins:"$VERSION" -t carlonluca/jenkins:latest -f ./multiarch/Dockerfile.debian .
     - docker push carlonluca/jenkins:"$VERSION"
     - docker push carlonluca/jenkins:latest
-  rules:
-    - when: manual
+  only:
+    - tags
