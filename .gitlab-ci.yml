@@ -19,3 +19,5 @@ docker-build:
     - docker push carlonluca/jenkins:latest
   only:
     - tags
+  tags:
+    - arm64
